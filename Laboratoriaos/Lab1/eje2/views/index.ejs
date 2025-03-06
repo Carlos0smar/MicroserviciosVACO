@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabla Generada</title>
+</head>
+<style>
+  table {
+      width: 70%;
+      border-collapse: collapse;
+  }
+  tr:nth-child(odd) {
+      background-color: white;
+  }
+
+  tr:nth-child(even) {
+      background-color: rgb(243, 243, 243);
+  }
+</style>
+<body>
+  <h1>Tabla de <%= operacion %> para el número <%= numf %></h1>
+  <table>
+    <tbody>
+        <% tabla.forEach(item => { %>
+        <tr>
+          <td ><%= item.num %></td>
+          <td><%= item.opeSimbol %></td>
+          <td><%= item.valor %></td>
+          <td> = </td>
+          <td><%= item.resultado %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <a href="/">Volver al formulario</a>
+</body>
+</html>

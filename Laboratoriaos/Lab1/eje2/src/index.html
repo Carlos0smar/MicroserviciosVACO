@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Web</title>
+</head>
+
+<body>
+    <div>
+        <h1>tabla auto generada </h1>
+        <form action="/" method="POST">
+            <label for="num">Numero</label>
+            <input type="number" id="num" name="num" required>
+
+            <label for="inicio">Inicio</label>
+            <input type="number" id="inicio" name="inicio" required>
+            
+            <label for="fin">Fin</label>
+            <input type="number" id="fin" name="fin" required>
+            
+            <label for="operacion">Operación:</label>
+            <select id="operacion" name="operacion" required>
+                <option value="suma">Sumar</option>
+                <option value="resta">Restar</option>
+                <option value="multiplicacion">Multiplicar</option>
+                <option value="division">Dividir</option>
+            </select>
+            
+            <button type="submit">Obtener tabla</button>
+        </form>
+        <div id="resultado"></div>
+    </div>
+</body>
+</html>
