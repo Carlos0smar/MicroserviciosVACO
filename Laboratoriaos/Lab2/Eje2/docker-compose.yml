@@ -1,0 +1,42 @@
+version: '3.8'
+name: lab2-eje2
+services:
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_agenda
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/bd_agenda.sql:/docker-entrypoint-initdb.d/bd_agenda.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+  web:
+    build: .
+    container_name: lab2-eje2
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: db_agenda
+      DB_PORT: 3306
+      DB_RETRY_LIMIT: 5
+      DB_RETRY_DELAY: 5000
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

@@ -1,0 +1,10 @@
+<!-- <% include('layout', { body: null }) %> -->
+<h2>Agregar Producto</h2>
+<form action="/edit/<%= contacto.id %>" method="POST">
+  
+  <label>Nombres: <input type="text" name="nombres" value="<%= contacto.nombres %>" required></label>
+  <label>Apellidos: <input type="text" name="apellidos" value="<%= contacto.apellidos %>" required></label>
+  <label>Dirección: <input type="text" name="direccion" value="<%= contacto.direccion %>" required></label>
+  <label>Teléfono: <input type="number" name="telefono" value="<%= contacto.telefono %>" required></label>
+  <button type="submit">Actualizar</button>
+</form>
