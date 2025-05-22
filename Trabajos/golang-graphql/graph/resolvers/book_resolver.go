@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"golang-graphql/database"
+	"golang-graphql/middleware"
 	"golang-graphql/models"
 	"log"
 
@@ -60,6 +61,11 @@ func GetBook() graphql.FieldResolveFn {
 }
 func CreateBook() graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (interface{}, error) {
+		// Verificar si el usuario es administrador
+		if !middleware.RequireAdmin(p.Context) {
+			return nil, errors.New("no tienes permisos para crear libros")
+		}
+
 		ctx := context.Background()
 
 		input, ok := p.Args["input"].(map[string]interface{})
@@ -89,6 +95,11 @@ func CreateBook() graphql.FieldResolveFn {
 
 func UpdateBook() graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (interface{}, error) {
+		// Verificar si el usuario es administrador
+		if !middleware.RequireAdmin(p.Context) {
+			return nil, errors.New("no tienes permisos para actualizar libros")
+		}
+
 		ctx := context.Background()
 
 		id, ok := p.Args["id"].(string)
@@ -136,6 +147,11 @@ func UpdateBook() graphql.FieldResolveFn {
 
 func DeleteBook() graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (interface{}, error) {
+		// Verificar si el usuario es administrador
+		if !middleware.RequireAdmin(p.Context) {
+			return nil, errors.New("no tienes permisos para eliminar libros")
+		}
+
 		ctx := context.Background()
 
 		id, ok := p.Args["id"].(string)

@@ -80,6 +80,57 @@ var DeleteBookResponseType = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
+var UserType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "User",
+	Fields: graphql.Fields{
+		"id": &graphql.Field{
+			Type: graphql.ID,
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if user, ok := p.Source.(*models.User); ok {
+					return user.GetID(), nil
+				}
+				if user, ok := p.Source.(models.User); ok {
+					return user.GetID(), nil
+				}
+				return nil, nil
+			},
+		},
+		"username": &graphql.Field{
+			Type: graphql.String,
+		},
+		"role": &graphql.Field{
+			Type: graphql.String,
+		},
+	},
+})
+
+var UserInputType = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "UserInput",
+	Fields: graphql.InputObjectConfigFieldMap{
+		"username": &graphql.InputObjectFieldConfig{
+			Type: graphql.NewNonNull(graphql.String),
+		},
+		"password": &graphql.InputObjectFieldConfig{
+			Type: graphql.NewNonNull(graphql.String),
+		},
+		"role": &graphql.InputObjectFieldConfig{
+			Type: graphql.NewNonNull(graphql.String),
+		},
+	},
+})
+
+var AuthResponseType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "AuthResponse",
+	Fields: graphql.Fields{
+		"token": &graphql.Field{
+			Type: graphql.String,
+		},
+		"user": &graphql.Field{
+			Type: UserType,
+		},
+	},
+})
+
 var RootQuery = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Query",
 	Fields: graphql.Fields{
@@ -131,6 +182,27 @@ var RootMutation = graphql.NewObject(graphql.ObjectConfig{
 				},
 			},
 			Resolve: resolvers.DeleteBook(),
+		},
+		"register": &graphql.Field{
+			Type: UserType,
+			Args: graphql.FieldConfigArgument{
+				"input": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(UserInputType),
+				},
+			},
+			Resolve: resolvers.RegisterUser(),
+		},
+		"login": &graphql.Field{
+			Type: AuthResponseType,
+			Args: graphql.FieldConfigArgument{
+				"username": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"password": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+			},
+			Resolve: resolvers.LoginUser(),
 		},
 	},
 })

@@ -17,6 +17,7 @@ const (
 var (
 	MongoClient *mongo.Client
 	BookCollection *mongo.Collection
+	UserCollection *mongo.Collection
 )
 
 func Connect() error {
@@ -41,6 +42,7 @@ func Connect() error {
 
 	MongoClient = client
 	BookCollection = client.Database(DATABASE_NAME).Collection("books")
+	UserCollection = client.Database(DATABASE_NAME).Collection("users")
 
 	return nil
 }

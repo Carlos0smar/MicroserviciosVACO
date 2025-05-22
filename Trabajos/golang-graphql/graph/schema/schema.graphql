@@ -12,6 +12,8 @@ type Mutation {
   createBook(input: BookInput!): Book!
   updateBook(id: ID!, input: BookInput!): Book!
   deleteBook(id: ID!): DeleteBookResponse!
+  register(input: UserInput!): User!
+  login(username: String!, password: String!): AuthResponse!
 }
 
 type Book {
@@ -36,4 +38,21 @@ input BookInput {
 type DeleteBookResponse {
   success: Boolean!
   message: String!
+}
+
+type User {
+  id: ID!
+  username: String!
+  role: String!
+}
+
+input UserInput {
+  username: String!
+  password: String!
+  role: String!
+}
+
+type AuthResponse {
+  token: String!
+  user: User!
 }

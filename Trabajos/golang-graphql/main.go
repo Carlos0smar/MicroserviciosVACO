@@ -11,6 +11,7 @@ import (
 
 	"golang-graphql/database"
 	"golang-graphql/graph/schema"
+	"golang-graphql/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/graphql-go/handler"
@@ -31,6 +32,9 @@ func main() {
 	})
 
 	router := gin.Default()
+
+	// Aplicar middleware de autenticación
+	router.Use(middleware.AuthMiddleware())
 
 	router.POST("/graphql", func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
