@@ -1,0 +1,134 @@
+{
+  "examples": {
+    "register": {
+      "request": {
+        "endpoint": "POST /api/register",
+        "description": "Registra un nuevo usuario en el sistema",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "username": "usuario_ejemplo",
+          "email": "usuario@ejemplo.com",
+          "password": "contraseña123"
+        }
+      },
+      "responses": {
+        "success": {
+          "status": 201,
+          "description": "Usuario registrado exitosamente",
+          "body": {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "expires_at": "2025-05-22T12:30:45Z",
+            "user": {
+              "id": 1,
+              "username": "usuario_ejemplo",
+              "email": "usuario@ejemplo.com",
+              "role": "user"
+            }
+          }
+        },
+        "error": {
+          "status": 409,
+          "description": "Usuario o email ya existen",
+          "body": {
+            "error": "El nombre de usuario o correo electrónico ya está en uso"
+          }
+        }
+      }
+    },
+    "login": {
+      "request": {
+        "endpoint": "POST /api/login",
+        "description": "Inicia sesión con un usuario existente",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "username": "usuario_ejemplo",
+          "password": "contraseña123"
+        }
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "description": "Inicio de sesión exitoso",
+          "body": {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "expires_at": "2025-05-22T12:30:45Z",
+            "user": {
+              "id": 1,
+              "username": "usuario_ejemplo",
+              "email": "usuario@ejemplo.com",
+              "role": "user"
+            }
+          }
+        },
+        "error": {
+          "status": 401,
+          "description": "Credenciales inválidas",
+          "body": {
+            "error": "Usuario o contraseña incorrectos"
+          }
+        }
+      }
+    },
+    "profile": {
+      "request": {
+        "endpoint": "GET /api/profile",
+        "description": "Obtiene el perfil del usuario autenticado",
+        "headers": {
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "description": "Perfil obtenido exitosamente",
+          "body": {
+            "id": 1,
+            "username": "usuario_ejemplo",
+            "email": "usuario@ejemplo.com",
+            "role": "user"
+          }
+        },
+        "error": {
+          "status": 401,
+          "description": "Token no proporcionado o inválido",
+          "body": {
+            "error": "token de autorización no proporcionado"
+          }
+        }
+      }
+    }
+  },
+  "jwt": {
+    "structure": {
+      "header": {
+        "alg": "HS256",
+        "typ": "JWT"
+      },
+      "payload": {
+        "user_id": 1,
+        "role": "user",
+        "sub": "usuario_ejemplo", 
+        "exp": 1716385845,
+        "iat": 1716382245,
+        "iss": "auth-service"
+      },
+      "signature": "HMACSHA256(base64UrlEncode(header) + '.' + base64UrlEncode(payload), secret)"
+    },
+    "explanation": {
+      "header": "Contiene el algoritmo de encriptación y el tipo de token",
+      "payload": {
+        "user_id": "ID del usuario en la base de datos",
+        "role": "Rol del usuario (user, admin, etc.)",
+        "sub": "Subject - nombre de usuario",
+        "exp": "Timestamp de expiración del token",
+        "iat": "Timestamp de emisión del token",
+        "iss": "Issuer - identificador del emisor del token"
+      },
+      "signature": "Firma creada con la clave secreta para verificar la autenticidad"
+    }
+  }
+}
