@@ -14,14 +14,14 @@ func SetupRoutes(router *gin.Engine, config config.Config) {
 	authController := controllers.NewAuthController(config)
 
 	// Grupo de rutas públicas (sin autenticación)
-	public := router.Group("/api")
+	public := router.Group("/api/auth")
 	{
 		public.POST("/register", authController.Register)
 		public.POST("/login", authController.Login)
 	}
 
 	// Grupo de rutas protegidas (requieren autenticación)
-	protected := router.Group("/api")
+	protected := router.Group("/api/auth")
 	protected.Use(middleware.AuthMiddleware(config))
 	{
 		protected.GET("/profile", authController.GetProfile)
