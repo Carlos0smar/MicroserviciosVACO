@@ -1,0 +1,165 @@
+version: '3.8'
+
+services:
+  
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy-hotel
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - auth-microservice
+      - habitaciones-microservice
+      - reservas-microservice
+    networks:
+      - app-network
+    restart: always
+
+  
+  auth-microservice:
+    build:
+      context: ./auth-nodejs/
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db-auth
+      DB_NAME: db_users_auth
+      DB_USER: auth_user
+      DB_PASS: auth_password
+      JWT_SECRET: microservicios_parcial_2_secret
+    depends_on:
+      db-auth:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/auth/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  
+  db-auth:
+    image: mysql:8.0
+    container_name: auth-mysql-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: db_users_auth
+      MYSQL_USER: auth_user
+      MYSQL_PASSWORD: auth_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3308:3306"
+    volumes:
+      - auth_data:/var/lib/mysql
+    networks:
+      - app-network
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  
+  habitaciones-microservice:
+    build:
+      context: ./habitaciones-go/
+      dockerfile: Dockerfile
+    container_name: habitaciones-service
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://db-habitaciones:27017/habitaciones_db_go
+      JWT_SECRET: microservicios_parcial_2_secret
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db-habitaciones
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  
+  db-habitaciones:
+    image: mongo:6.0
+    container_name: habitaciones-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - habitaciones_data:/data/db
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  reservas-microservice:
+    build:
+      context: ./reservas-nodejs/
+      dockerfile: Dockerfile
+    container_name: reservas-service
+    restart: always
+    environment:
+      DB_HOST: db-reservas
+      DB_NAME: db_reservas
+      DB_USER: reservas_user
+      DB_PASS: reservas_password
+      JWT_SECRET: microservicios_parcial_2_secret
+    ports:
+      - "4000:4000"
+    depends_on:
+      db-reservas:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  
+  db-reservas:
+    image: mysql:8.0
+    container_name: reservas-mysql-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: db_reservas
+      MYSQL_USER: reservas_user
+      MYSQL_PASSWORD: reservas_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - reservas_data:/var/lib/mysql
+      - ./reservas-nodejs/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  auth_data:
+  habitaciones_data:
+  reservas_data:

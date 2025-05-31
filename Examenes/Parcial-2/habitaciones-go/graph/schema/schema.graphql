@@ -1,0 +1,56 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  habitaciones: [Habitacion!]!
+  habitacion(id: ID!): Habitacion
+}
+
+type Mutation {
+  createHabitacion(input: HabitacionInput!): Habitacion!
+  updateHabitacion(id: ID!, input: HabitacionInput!): Habitacion!
+  deleteHabitacion(id: ID!): DeleteHabitacionResponse!
+  register(input: UserInput!): User!
+  login(username: String!, password: String!): AuthResponse!
+}
+
+type Habitacion {
+  id: ID!
+  numero_habitacion: Int!
+  tipo_habitacion: String!
+  precio_por_noche: Float!
+  estado: String!
+  descripcion: String!
+}
+
+input HabitacionInput {
+  numero_habitacion: Int!
+  tipo_habitacion: String!
+  precio_por_noche: Float!
+  estado: String!
+  descripcion: String!
+}
+
+type DeleteHabitacionResponse {
+  success: Boolean!
+  message: String!
+}
+
+type User {
+  id: ID!
+  username: String!
+  role: String!
+}
+
+input UserInput {
+  username: String!
+  password: String!
+  role: String!
+}
+
+type AuthResponse {
+  token: String!
+  user: User!
+}
