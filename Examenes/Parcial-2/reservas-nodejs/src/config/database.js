@@ -3,10 +3,10 @@ const { Sequelize } = require('sequelize');
 
 const createDatabaseIfNotExists = async () => {
   const temporalSequelize = new Sequelize({
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST || 'db-reservas',
     dialect: 'mysql',
-    username: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
+    username: process.env.DB_USER || 'reservas_user',
+    password: process.env.DB_PASSWORD || 'reservas_password',
     logging: console.log
   });
 
@@ -19,20 +19,30 @@ const createDatabaseIfNotExists = async () => {
   }
 };
 
+// const sequelize = new Sequelize(
+//   process.env.DB_NAME || 'reservas_db',
+//   process.env.DB_USER || 'reservas_user',
+//   process.env.DB_PASSWORD || 'reservas_password' ,
+//   {
+//     host: process.env.DB_HOST || 'db-reservas',
+//     dialect: 'mysql',
+//     logging: console.log,
+//     pool: {
+//       max: 5,
+//       min: 0,
+//       acquire: 30000,
+//       idle: 10000
+//     }
+//   }
+// );
+
 const sequelize = new Sequelize(
   process.env.DB_NAME || 'reservas_db',
-  process.env.DB_USER || 'root',
-  process.env.DB_PASSWORD || '',
+  process.env.DB_USER || 'reservas_user',
+  process.env.DB_PASSWORD || 'reservas_password' ,
   {
-    host: process.env.DB_HOST || 'localhost',
-    dialect: 'mysql',
-    logging: console.log,
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000
-    }
+    host: process.env.DB_HOST || 'db-reservas',
+    dialect: 'mysql'
   }
 );
 
